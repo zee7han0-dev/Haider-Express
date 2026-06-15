@@ -44,7 +44,7 @@ window.addToCart = function (productId) {
       name: productSource.name,
       price: productSource.price,
       color: productSource.color,
-      image: productSource.image,
+      image: productSource.images[0],
       quantity: 1,
     });
   }
@@ -185,7 +185,6 @@ function populateCheckoutSummary() {
 // 6. CHECKOUT — STEP 2 (Payment Method Modal)
 // ==========================================
 
-// Temporarily store order details between step 1 and step 2
 let pendingOrderData = null;
 
 window.handleOrderSubmission = function (event) {
@@ -201,11 +200,8 @@ window.handleOrderSubmission = function (event) {
   const phoneField = formElement.querySelector('input[name="Phone"]');
   const zipField = formElement.querySelector('input[name="Zip Code"]');
 
-  // ---- PHONE VALIDATION ----
-  // Pakistan numbers: must start with 03 and be exactly 11 digits (e.g. 03001234567)
-  // Also accepts +92 format: +923001234567
   const rawPhone = phoneField ? phoneField.value.trim() : "";
-  const phoneDigits = rawPhone.replace(/[\s\-\(\)]/g, ""); // strip spaces, dashes, brackets
+  const phoneDigits = rawPhone.replace(/[\s\-\(\)]/g, "");
   const pakistanPhoneRegex = /^(\+92|0092|0)3[0-9]{9}$/;
 
   if (!pakistanPhoneRegex.test(phoneDigits)) {
@@ -219,8 +215,6 @@ window.handleOrderSubmission = function (event) {
     clearFieldError(phoneField);
   }
 
-  // ---- POSTAL CODE VALIDATION ----
-  // Pakistan postal codes are exactly 5 digits (e.g. 38000 for Faisalabad)
   const rawZip = zipField ? zipField.value.trim() : "";
   const pakistanZipRegex = /^[0-9]{5}$/;
 
@@ -235,7 +229,6 @@ window.handleOrderSubmission = function (event) {
     clearFieldError(zipField);
   }
 
-  // ---- ALL VALID — save and proceed ----
   pendingOrderData = {
     customerName: nameField ? nameField.value : "Customer",
     email: emailField ? emailField.value : "",
@@ -249,11 +242,8 @@ window.handleOrderSubmission = function (event) {
   setTimeout(() => openPaymentModal(), 300);
 };
 
-// Show a red error message below a field
 function showFieldError(field, message) {
-  // Remove any existing error on this field first
   clearFieldError(field);
-
   field.classList.add("border-rose-400", "bg-rose-50");
 
   const errorEl = document.createElement("p");
@@ -264,7 +254,6 @@ function showFieldError(field, message) {
   field.parentNode.appendChild(errorEl);
 }
 
-// Remove error state from a field
 function clearFieldError(field) {
   field.classList.remove("border-rose-400", "bg-rose-50");
   const existingError = field.parentNode.querySelector(".field-error-msg");
@@ -280,7 +269,6 @@ window.openPaymentModal = function () {
   const modalBody = document.getElementById("payment-modal-body");
   if (!modal || !modalBody) return;
 
-  // Reset to method selection view
   showPaymentMethodSelection();
 
   modal.classList.remove("invisible", "opacity-0");
@@ -318,7 +306,6 @@ function showPaymentMethodSelection() {
     </div>
 
     <div class="space-y-3">
-
       <button onclick="showPaymentDetails('easypaisa')" class="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-slate-100 hover:border-[#4CAF50] hover:bg-green-50/50 transition group">
         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0">📱</div>
         <div class="text-left">
@@ -345,7 +332,6 @@ function showPaymentMethodSelection() {
         </div>
         <svg class="ml-auto w-4 h-4 text-slate-300 group-hover:text-amber-400 transition" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
       </button>
-
     </div>
   `;
 }
@@ -355,7 +341,6 @@ window.showPaymentDetails = function (method) {
   if (!content) return;
 
   const total = pendingOrderData ? pendingOrderData.total : 0;
-
   let detailsHTML = "";
 
   if (method === "easypaisa") {
@@ -470,7 +455,6 @@ window.confirmOrder = function (paymentMethod) {
     items: pendingOrderData.items,
     total: pendingOrderData.total,
     paymentMethod: paymentLabels[paymentMethod],
-    // COD is auto-confirmed, others are pending verification
     status: paymentMethod === "cod" ? "confirmed" : "pending",
   };
 
@@ -478,7 +462,6 @@ window.confirmOrder = function (paymentMethod) {
   orderHistory.unshift(newOrder);
   localStorage.setItem("bagzone_orders", JSON.stringify(orderHistory));
 
-  // Clear cart
   cart = [];
   localStorage.setItem("bagzone_cart", JSON.stringify(cart));
   updateCartBadge();
@@ -524,7 +507,7 @@ function renderFilteredGrid(productsList) {
     productGrid.innerHTML = `
       <div class="col-span-full text-center py-16 bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
         <span class="text-5xl block mb-4">🔍</span>
-        <h4 class="font-black text-slate-900 tracking-tight text-lg">No matching bags found</h4>
+        <h4 class="font-black text-slate-900 tracking-tight text-lg">No matching items found</h4>
         <p class="text-slate-400 text-xs mt-1">Try tweaking your search keywords or broadening your budget boundaries.</p>
       </div>
     `;
@@ -534,15 +517,18 @@ function renderFilteredGrid(productsList) {
   productsList.forEach((product) => {
     productGrid.innerHTML += `
       <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden hover:shadow-md transition flex flex-col group">
-        <div class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center text-slate-400">
-          <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+        <a href="product-details.html?id=${product.id}" class="h-64 bg-slate-100 relative overflow-hidden flex items-center justify-center text-slate-400 block cursor-pointer">
+          <img src="${product.images[0]}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
           <div class="hidden absolute inset-0 flex items-center justify-center p-4 text-center bg-slate-100">
-            <span class="text-xs font-semibold text-slate-400">Missing Image<br><span class="text-[10px] font-mono">${product.image}</span></span>
+            <span class="text-xs font-semibold text-slate-400">Missing Image<br><span class="text-[10px] font-mono">${product.images[0]}</span></span>
           </div>
-        </div>
+        </a>
+        
         <div class="p-6 flex flex-col flex-grow">
           <div class="mb-2 flex items-center justify-between gap-2">
-            <h3 class="font-black text-slate-900 text-base tracking-tight">${product.name}</h3>
+            <a href="product-details.html?id=${product.id}" class="hover:text-[#2bc4c3] transition cursor-pointer">
+              <h3 class="font-black text-slate-900 text-base tracking-tight">${product.name}</h3>
+            </a>
             <span class="text-xs font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded-lg whitespace-nowrap">${product.color}</span>
           </div>
           <p class="text-slate-500 text-xs leading-relaxed line-clamp-2 mb-6 flex-grow">${product.description}</p>
@@ -602,13 +588,11 @@ function renderOrdersPage() {
       )
       .join("");
 
-    // Status badge logic
     const isPending = order.status === "pending";
     const statusBadge = isPending
       ? `<span class="bg-amber-100 text-amber-700 font-black px-2.5 py-0.5 rounded-full text-[10px] tracking-wide uppercase inline-block animate-pulse">⏳ Payment Pending</span>`
       : `<span class="bg-emerald-100 text-emerald-700 font-black px-2.5 py-0.5 rounded-full text-[10px] tracking-wide uppercase inline-block">✅ Confirmed</span>`;
 
-    // Payment method badge
     const paymentBadge = `<span class="bg-slate-100 text-slate-600 font-bold px-2.5 py-0.5 rounded-full text-[10px] tracking-wide uppercase inline-block">${order.paymentMethod || "N/A"}</span>`;
 
     container.innerHTML += `
