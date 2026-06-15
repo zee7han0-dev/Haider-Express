@@ -429,10 +429,10 @@ window.showPaymentDetails = function (method) {
 };
 
 // ==========================================
-// 8. ORDER CONFIRMATION
+// 8. ORDER CONFIRMATION & FORMSPREE SUBMISSION
 // ==========================================
 
-window.confirmOrder = function (paymentMethod) {
+window.confirmOrder = async function (paymentMethod) {
   if (!pendingOrderData) return;
 
   const paymentLabels = {
@@ -441,6 +441,52 @@ window.confirmOrder = function (paymentMethod) {
     cod: "Cash on Delivery",
   };
 
+  // 1. Compile the readable items summary for your email alert
+  const itemsText = pendingOrderData.items
+    .map(
+      (item) =>
+        `${item.name} (x${item.quantity}) - Rs.${(item.price * item.quantity).toFixed(0)}`,
+    )
+    .join("\n");
+
+  // 2. Build the data package matching your HTML Form input fields
+  const formData = new FormData();
+  formData.append("Client Name", pendingOrderData.customerName);
+  formData.append("_replyto", pendingOrderData.email);
+  formData.append("Phone", pendingOrderData.phone);
+  formData.append("Street Address", pendingOrderData.deliveryAddress);
+  formData.append("Order_Items_Summary", `Items:\n${itemsText}`);
+  formData.append("Selected_Payment_Method", paymentLabels[paymentMethod]);
+  formData.append("Total_Payable", `Rs.${pendingOrderData.total}`);
+
+  // 3. Optional: Visual Loading State in the payment modal while it sends
+  const contentContainer = document.getElementById("payment-modal-content");
+  if (contentContainer) {
+    contentContainer.innerHTML = `
+      <div class="text-center py-12 space-y-4">
+        <div class="w-12 h-12 border-4 border-[#2bc4c3] border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <h3 class="font-black text-slate-900 text-lg">Sending Order Request...</h3>
+        <p class="text-slate-400 text-xs">Please do not close this window.</p>
+      </div>
+    `;
+  }
+
+  try {
+    // 4. Send the data payload directly to Formspree
+    // 👉 SWAP 'YOUR_FORMSPREE_ID' WITH YOUR ACTUAL FORMSPREE ID STRING!
+    await fetch("https://formspree.io/f/mbdewgyz", {
+      method: "POST",
+      body: formData,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+  } catch (error) {
+    console.error("Formspree Submission Error:", error);
+    // We let it pass through so the user still gets their order recorded locally even if network hiccups occur
+  }
+
+  // 5. Keep all of your original local dashboard logic intact!
   const newOrder = {
     orderId: "HE-" + Math.floor(100000 + Math.random() * 900000),
     date: new Date().toLocaleDateString("en-US", {
