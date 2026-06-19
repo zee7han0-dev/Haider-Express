@@ -473,7 +473,6 @@ window.confirmOrder = async function (paymentMethod) {
 
   try {
     // 4. Send the data payload directly to Formspree
-    // 👉 SWAP 'YOUR_FORMSPREE_ID' WITH YOUR ACTUAL FORMSPREE ID STRING!
     await fetch("https://formspree.io/f/mbdewgyz", {
       method: "POST",
       body: formData,
