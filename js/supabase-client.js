@@ -3,10 +3,10 @@
 // Load AFTER the Supabase CDN <script> tag, BEFORE app.js
 // ============================================================
 
-const SUPABASE_URL = "https://zsnidblwlidwlpbxyvqm.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_ZvJebDC8OWpWhyuQSZMx2w_S_g7nMZY";
+const SUPABASE_URL = "https://YOUR-PROJECT-REF.supabase.co"; // <-- replace
+const SUPABASE_ANON_KEY = "YOUR-ANON-PUBLIC-KEY";             // <-- replace (safe to expose client-side)
 
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+  SUPABASE_ANON_KEY
 );

@@ -53,10 +53,7 @@ function showToast(message, type = "success", duration = 3000) {
  * Returns a Promise<boolean> resolved true/false based on the user's choice.
  * container: a DOM element to render the confirm card into (e.g. the order card footer)
  */
-function showInlineConfirm(
-  container,
-  { title, message, confirmLabel = "Confirm", cancelLabel = "Go Back" },
-) {
+function showInlineConfirm(container, { title, message, confirmLabel = "Confirm", cancelLabel = "Go Back" }) {
   return new Promise((resolve) => {
     const original = container.innerHTML;
 
@@ -77,19 +74,17 @@ function showInlineConfirm(
       </div>
     `;
 
-    container
-      .querySelector('[data-action="confirm"]')
-      .addEventListener("click", () => {
-        resolve(true);
-      });
-    container
-      .querySelector('[data-action="cancel"]')
-      .addEventListener("click", () => {
-        container.innerHTML = original;
-        resolve(false);
-      });
+    container.querySelector('[data-action="confirm"]').addEventListener("click", () => {
+      resolve(true);
+    });
+    container.querySelector('[data-action="cancel"]').addEventListener("click", () => {
+      container.innerHTML = original;
+      resolve(false);
+    });
   });
 }
+
+
 
 let cart = JSON.parse(localStorage.getItem("bagzone_cart")) || [];
 
@@ -146,6 +141,8 @@ window.addToCart = function (productId) {
   }
   saveCart();
 };
+
+
 
 // ==========================================
 // 4. CART PAGE RENDERER
@@ -498,8 +495,7 @@ window.confirmOrder = async function (paymentMethod) {
 
   // 6. Keep a local display cache so orders.html can render instantly without a fetch
   const newOrder = {
-    orderId:
-      supabaseOrderId || "HE-" + Math.floor(100000 + Math.random() * 900000),
+    orderId: supabaseOrderId || "HE-" + Math.floor(100000 + Math.random() * 900000),
     supabaseId: supabaseOrderId,
     date: new Date().toLocaleDateString("en-US", {
       year: "numeric",
@@ -565,10 +561,7 @@ window.cancelOrder = async function (localOrderId, btnEl) {
       if (error) throw error;
     } catch (error) {
       console.error("Supabase cancel update failed:", error);
-      showToast(
-        "Could not reach the server to cancel this order. Please try again.",
-        "error",
-      );
+      showToast("Could not reach the server to cancel this order. Please try again.", "error");
       return;
     }
   }
@@ -705,9 +698,7 @@ function getOrdersTabCounts(orders) {
   return {
     all: orders.length,
     active: orders.filter((o) => o.status === "pending").length,
-    completed: orders.filter(
-      (o) => o.status !== "pending" && o.status !== "cancelled",
-    ).length,
+    completed: orders.filter((o) => o.status !== "pending" && o.status !== "cancelled").length,
     cancelled: orders.filter((o) => o.status === "cancelled").length,
   };
 }
@@ -895,9 +886,7 @@ function initReviewsSection() {
 
   const form = document.getElementById("review-form");
   if (form) {
-    form.addEventListener("submit", (event) =>
-      handleReviewSubmit(event, productId),
-    );
+    form.addEventListener("submit", (event) => handleReviewSubmit(event, productId));
   }
 
   // Star rating picker interactivity
@@ -1023,8 +1012,7 @@ async function handleReviewSubmit(event, productId) {
 
   if (!name || !comment || !rating || rating < 1 || rating > 5) {
     if (errorEl) {
-      errorEl.textContent =
-        "Please enter your name, write a comment, and select a star rating.";
+      errorEl.textContent = "Please enter your name, write a comment, and select a star rating.";
       errorEl.classList.remove("hidden");
     }
     return;
@@ -1060,8 +1048,7 @@ async function handleReviewSubmit(event, productId) {
   } catch (error) {
     console.error("Failed to submit review:", error);
     if (errorEl) {
-      errorEl.textContent =
-        "Something went wrong submitting your review. Please try again.";
+      errorEl.textContent = "Something went wrong submitting your review. Please try again.";
       errorEl.classList.remove("hidden");
     }
   } finally {

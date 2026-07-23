@@ -122,12 +122,8 @@
         id="reviews-section-container"
         class="bg-white rounded-3xl border border-slate-100 p-6 md:p-10 shadow-sm mt-8"
       >
-        <div
-          class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-6 mb-6"
-        >
-          <h2 class="text-xl font-black text-slate-900 tracking-tight">
-            Customer Reviews
-          </h2>
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-6 mb-6">
+          <h2 class="text-xl font-black text-slate-900 tracking-tight">Customer Reviews</h2>
           <div id="reviews-summary"></div>
         </div>
 
@@ -137,17 +133,11 @@
 
           <!-- Review submission form -->
           <div class="md:col-span-2">
-            <div
-              class="bg-slate-50 border border-slate-100 rounded-2xl p-5 sticky top-24"
-            >
-              <h3 class="font-black text-slate-900 text-sm mb-4">
-                Write a Review
-              </h3>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 sticky top-24">
+              <h3 class="font-black text-slate-900 text-sm mb-4">Write a Review</h3>
               <form id="review-form" class="space-y-4">
                 <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1"
-                    >Your Name</label
-                  >
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Your Name</label>
                   <input
                     id="review-name-input"
                     type="text"
@@ -158,53 +148,19 @@
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1"
-                    >Your Rating</label
-                  >
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Your Rating</label>
                   <div class="flex gap-1 text-2xl">
-                    <button
-                      type="button"
-                      data-value="1"
-                      class="review-star-btn text-slate-300 transition"
-                    >
-                      ☆
-                    </button>
-                    <button
-                      type="button"
-                      data-value="2"
-                      class="review-star-btn text-slate-300 transition"
-                    >
-                      ☆
-                    </button>
-                    <button
-                      type="button"
-                      data-value="3"
-                      class="review-star-btn text-slate-300 transition"
-                    >
-                      ☆
-                    </button>
-                    <button
-                      type="button"
-                      data-value="4"
-                      class="review-star-btn text-slate-300 transition"
-                    >
-                      ☆
-                    </button>
-                    <button
-                      type="button"
-                      data-value="5"
-                      class="review-star-btn text-slate-300 transition"
-                    >
-                      ☆
-                    </button>
+                    <button type="button" data-value="1" class="review-star-btn text-slate-300 transition">☆</button>
+                    <button type="button" data-value="2" class="review-star-btn text-slate-300 transition">☆</button>
+                    <button type="button" data-value="3" class="review-star-btn text-slate-300 transition">☆</button>
+                    <button type="button" data-value="4" class="review-star-btn text-slate-300 transition">☆</button>
+                    <button type="button" data-value="5" class="review-star-btn text-slate-300 transition">☆</button>
                   </div>
                   <input type="hidden" id="review-rating-input" required />
                 </div>
 
                 <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1"
-                    >Your Review</label
-                  >
+                  <label class="block text-xs font-bold text-slate-700 mb-1">Your Review</label>
                   <textarea
                     id="review-comment-input"
                     required
