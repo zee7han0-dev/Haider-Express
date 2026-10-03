@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { @apply bg-paper text-ink font-sans antialiased; }
+:focus-visible { outline: 3px solid #F5A623; outline-offset: 2px; }
+.btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold transition active:scale-95; }
+.btn-primary { @apply btn bg-brand text-white hover:bg-brand-dark; }
+.btn-accent { @apply btn bg-saffron text-ink hover:brightness-95; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
